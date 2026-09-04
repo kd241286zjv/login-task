@@ -18,4 +18,10 @@ export class UsersController {
 
     return res.status(201).json(user);
   }
+
+  async me(req: Request, res: Response) {
+    const user = await this.service.findById(req.userId);
+
+    return res.status(200).json(user);
+  }
 }

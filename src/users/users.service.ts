@@ -18,6 +18,16 @@ export class UsersService {
     return { id, email };
   }
 
+  async findById(id: string) {
+    const user = await this.repository.findById(id);
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    return user;
+  }
+
   async login(email: string, password: string) {
     const user = await this.repository.findByEmail(email);
 

@@ -16,6 +16,19 @@ export class UsersRepository {
     return rows[0];
   }
 
+  async findById(id: string) {
+    const [rows] = await pool.query<User[]>(
+      `
+                SELECT id, email, password_hash, created_at, updated_at
+                FROM users
+                WHERE id = ? LIMIT 1
+            `,
+      [id]
+    );
+
+    return rows[0];
+  }
+
   async createUser(email: string, passwordHash: string) {
     const id = uuidv4();
 
