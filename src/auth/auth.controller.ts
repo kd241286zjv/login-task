@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { loginSchema } from '../users/users.schemas.js';
 import { env } from '../config/env';
+import { authCookieOptions } from './auth.cookie';
 
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -17,14 +18,16 @@ export class AuthController {
 
     const token = await this.authService.login(email, password);
 
-    res.cookie('access_token', token, {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
+    res.cookie('access_token', token, authCookieOptions);
 
     return res.status(200).json({
       message: 'Logged in successfully',
     });
+  }
+
+  async logout(req: Request, res: Response) {
+    res.clearCookie('access_token', authCookieOptions);
+
+    return res.status(204).send();
   }
 }

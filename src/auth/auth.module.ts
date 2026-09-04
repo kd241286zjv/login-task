@@ -13,6 +13,7 @@ export const authModule = () => {
   const router = Router();
 
   router.post('/auth/login', controller.login.bind(controller));
+  router.post('/auth/logout', controller.logout.bind(controller));
 
   return router;
 };
