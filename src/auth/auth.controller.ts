@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { UsersService } from '../users/users.service.js';
+import { AuthService } from './auth.service.js';
 import { loginSchema } from '../users/users.schemas.js';
+import { env } from '../config/env';
 
 export class AuthController {
-  constructor(private usersService: UsersService) {}
+  constructor(private authService: AuthService) {}
 
   async login(req: Request, res: Response) {
     const result = loginSchema.safeParse(req.body);
@@ -14,8 +15,16 @@ export class AuthController {
 
     const { email, password } = result.data;
 
-    const user = await this.usersService.login(email, password);
+    const token = await this.authService.login(email, password);
 
-    return res.status(200).json(user);
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return res.status(200).json({
+      message: 'Logged in successfully',
+    });
   }
 }
