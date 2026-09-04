@@ -1,19 +1,36 @@
 import { UsersRepository } from './users.repository.js';
 import bcrypt from 'bcrypt';
+import { AppError } from '../common/errors/app-error';
 
 export class UsersService {
-    constructor(private repository: UsersRepository) {}
-    async register(email: string, password: string) {
-        const existingUser = await this.repository.findByEmail(email);
+  constructor(private repository: UsersRepository) {}
+  async register(email: string, password: string) {
+    const existingUser = await this.repository.findByEmail(email);
 
-        if (existingUser) {
-            throw new Error('User already exists');
-        }
-
-        const passwordHash = await bcrypt.hash(password, 12);
-
-        const id = await this.repository.createUser(email, passwordHash);
-
-        return { id, email };
+    if (existingUser) {
+      throw new AppError('User already exists', 409);
     }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const id = await this.repository.createUser(email, passwordHash);
+
+    return { id, email };
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.repository.findByEmail(email);
+
+    if (!user) {
+      throw new AppError('Invalid credentials', 401);
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatches) {
+      throw new AppError('Invalid credentials', 401);
+    }
+
+    return user;
+  }
 }
