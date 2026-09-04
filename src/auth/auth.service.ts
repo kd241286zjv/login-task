@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { UsersService } from '../users/users.service.js';
 import { RefreshTokensRepository } from './refresh-tokens.repository.js';
-import { REFRESH_TOKEN_TTL_MS } from './auth.config.js';
+import {ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL_MS} from './auth.config.js';
 import { AppError } from '../common/errors/app-error';
 
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
 
   private async createTokenPair(userId: string) {
     const accessToken = jwt.sign({ sub: userId }, env.JWT_SECRET, {
-      expiresIn: '15m',
+      expiresIn: ACCESS_TOKEN_TTL,
     });
 
     const refreshToken = crypto.randomBytes(32).toString('hex');

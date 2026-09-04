@@ -25,7 +25,12 @@ export class UsersService {
       throw new AppError('User not found', 404);
     }
 
-    return user;
+    return {
+      id: user.id,
+      email: user.email,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
   }
 
   async login(email: string, password: string) {
