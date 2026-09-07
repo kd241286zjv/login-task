@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { UsersService } from '../users/users.service.js';
 import { RefreshTokensRepository } from './refresh-tokens.repository.js';
-import {ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL_MS} from './auth.config.js';
+import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL_MS } from './auth.config.js';
 import { AppError } from '../common/errors/app-error';
 
 export class AuthService {

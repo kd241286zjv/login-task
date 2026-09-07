@@ -1,6 +1,7 @@
 import { UsersRepository } from './users.repository.js';
 import bcrypt from 'bcrypt';
 import { AppError } from '../common/errors/app-error';
+import { publish } from '../rabbitmq/rabbitmq.publisher.js';
 
 export class UsersService {
   constructor(private repository: UsersRepository) {}
@@ -14,6 +15,11 @@ export class UsersService {
     const passwordHash = await bcrypt.hash(password, 12);
 
     const id = await this.repository.createUser(email, passwordHash);
+
+    publish('user.created', {
+      userId: id,
+      email,
+    });
 
     return { id, email };
   }
