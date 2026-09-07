@@ -20,4 +20,8 @@ export const env = {
   },
 
   JWT_SECRET,
+
+  RABBITMQ: {
+    URL: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
+  },
 };
